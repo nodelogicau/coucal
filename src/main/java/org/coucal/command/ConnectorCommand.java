@@ -1,7 +1,7 @@
 package org.coucal.command;
 
 import org.ical4j.connector.command.AbstractCommand;
-import org.mnode.coucou.Connector;
+import org.coucal.Connector;
 import picocli.CommandLine;
 
 import java.util.List;
