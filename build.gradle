@@ -1,0 +1,136 @@
+plugins {
+    id 'java'
+    id 'application'
+    id "biz.aQute.bnd.builder" version "5.1.2"
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'pl.allegro.tech.build.axion-release' version '1.13.6'
+}
+
+java {
+    registerFeature('jettyHttp') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    implementation "org.ical4j:ical4j-connector-api:$ical4jConnectorVersion",
+            "org.ical4j:ical4j-integration-api:$ical4jIntegrationVersion"
+
+    implementation ("org.eclipse.jetty:jetty-server:$jettyVersion") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    implementation ("org.eclipse.jetty:jetty-servlet:$jettyVersion") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    implementation "info.picocli:picocli:$picocliVersion"
+
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
+
+    jettyHttpImplementation 'org.glassfish.jersey.containers:jersey-container-jetty-http:3.1.1',
+            'org.glassfish.jersey.inject:jersey-hk2:3.1.1',
+            'org.glassfish.jersey.media:jersey-media-json-jackson:3.1.1'
+
+    runtimeOnly "org.slf4j:slf4j-log4j12:$slf4jVersion", "org.apache.logging.log4j:log4j:$log4jVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+javadoc {
+    options {
+        links 'https://docs.oracle.com/en/java/javase/11/docs/api/',
+                'http://ical4j.github.io/docs/ical4j/api/3.1.0/',
+                'http://fasterxml.github.io/jackson-core/javadoc/2.13/',
+                'http://fasterxml.github.io/jackson-databind/javadoc/2.13/',
+                'http://fasterxml.github.io/jackson-dataformat-xml/javadoc/2.13/'
+    }
+}
+
+scmVersion {
+    tag {
+        prefix = 'coucou-'
+    }
+    versionCreator 'versionWithBranch'
+    branchVersionCreator = ['main': 'simple']
+}
+
+group = 'org.coucal'
+description = 'A command framework for calendaring, scheduling and resource management'
+version = scmVersion.version
+
+jar {
+    manifest {
+        attributes (
+                'Implementation-Title': 'Coucal',
+                'Implementation-Version': version,
+                'Implementation-Vendor': 'C O U C O U L A N D'
+        )
+    }
+}
+
+ext {
+    isReleaseVersion = !version.endsWith("SNAPSHOT")
+}
+
+publishing {
+    publications {
+        coucou(MavenPublication) {
+            from components.java
+            pom.withXml {
+                asNode().appendNode('name', project.name)
+                asNode().appendNode('description', project.description)
+                asNode().appendNode('url', 'https://www.coucal.org')
+
+                def scmNode = asNode().appendNode('scm')
+                scmNode.appendNode('url', 'https://github.com/coucouland/coucal')
+                scmNode.appendNode('connection', 'scm:git@github.com:coucouland/coucal.git')
+                scmNode.appendNode('developerConnection', 'scm:git@github.com:coucouland/coucal.git')
+
+                def licenseNode = asNode().appendNode('licenses').appendNode('license')
+                licenseNode.appendNode('name', 'Coucou - License')
+                licenseNode.appendNode('url', 'https://raw.githubusercontent.com/coucouland/coucal/master/LICENSE')
+                licenseNode.appendNode('distribution', 'repo')
+
+                def developerNode = asNode().appendNode('developers').appendNode('developer')
+                developerNode.appendNode('id', 'fortuna')
+                developerNode.appendNode('name', 'Ben Fortuna')
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = version.endsWith('SNAPSHOT') ? "https://oss.sonatype.org/content/repositories/snapshots/" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    required { isReleaseVersion }
+    sign publishing.publications.coucou
+}
+
+application {
+    mainClass = 'org.coucal.CoucalMain'
+}
