@@ -1,16 +1,13 @@
 # Coucal
 
-A command framework for calendaring, scheduling and resource management
+A headless Calendar User Agent (CUA) that provides essential functionality for calendaring, journalimg and team collaboration.
 
 ## Overview
 
-Coucou is a command-based tool for creating and managing calendar events, tasks and resource availability.
-
-In its simplest form, Coucou may be used as a command-line tool to create and share calendar and resource
-information across a wide variety of collaboration tools and platforms.
-
-As an API it becomes a powerful backend to booking, scheduling and engagement web applications. With built-in
-features such as email invites and notifications, and synchronization with backend systems, the possibilities
+Coucal is designed to provide backend functionality for a wide variety of calendar, task and workflow applications. If you consider
+the current landscape of calendaring and work management applications you will see that for a long time it has been dominated by
+a few major products that have opinionated approaches to team collaboration. Coucal is provided to hopefully provide an alternative
+to how you build and customise your collaborative tooling and work management processes.
 
 ## Features
 
