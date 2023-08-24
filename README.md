@@ -1,6 +1,6 @@
 # Coucal
 
-A headless Calendar User Agent (CUA) that provides essential functionality for calendaring, journalimg and team collaboration.
+A headless Calendar User Agent (CUA) that provides essential functionality for calendaring, journaling and team collaboration.
 
 ## Overview
 
@@ -8,6 +8,11 @@ Coucal is designed to provide backend functionality for a wide variety of calend
 the current landscape of calendaring and work management applications you will see that for a long time it has been dominated by
 a few major products that have opinionated approaches to team collaboration. Coucal is provided to hopefully provide an alternative
 to how you build and customise your collaborative tooling and work management processes.
+
+## Design
+
+The Coucal architecture is based on the principles of interoperability and sharing. We want our data to be open and standardised,
+such that we can achieve maximum integration and collaboration with other tools and platforms. We also want 
 
 ## Features
 
