@@ -1,11 +1,14 @@
+import java.time.Year
+
 plugins {
-    id 'java'
+    id 'groovy'
     id 'application'
     id "biz.aQute.bnd.builder" version "5.1.2"
     id 'java-library'
     id 'maven-publish'
     id 'signing'
     id 'pl.allegro.tech.build.axion-release' version '1.13.6'
+    id 'org.cadixdev.licenser' version '0.6.1'
 }
 
 java {
@@ -16,6 +19,7 @@ java {
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
     }
@@ -27,8 +31,11 @@ java {
 }
 
 dependencies {
-    implementation "org.ical4j:ical4j-connector-api:$ical4jConnectorVersion",
-            "org.ical4j:ical4j-integration-api:$ical4jIntegrationVersion"
+    implementation "org.ical4j:ical4j-command:$ical4jCommandVersion",
+            "org.ical4j:ical4j-serializer:$ical4jSerializerVersion",
+            "org.ical4j:ical4j-connector-api:$ical4jConnectorVersion",
+            "org.mnode.ical4j:ical4j-vcard:$ical4jVCardVersion",
+            "org.mnode.ical4j:ical4j:$ical4jVersion"
 
     implementation ("org.eclipse.jetty:jetty-server:$jettyVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -37,10 +44,25 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    // auth
+    implementation 'org.pac4j:jersey3-pac4j:6.0.0',
+            'org.pac4j:pac4j-http:6.0.0-RC10'
+    
     implementation "info.picocli:picocli:$picocliVersion"
 
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
 
+//    implementation 'com.google.inject:guice:7.0.0'
+
+    // swagger
+    implementation "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.7",
+            "io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-jakarta:2.2.7",
+            "javax.xml.bind:jaxb-api:2.2.11"
+    
+    // spock
+    testImplementation platform("org.spockframework:spock-bom:2.1-groovy-3.0"),
+            "org.spockframework:spock-core"
+    
     jettyHttpImplementation 'org.glassfish.jersey.containers:jersey-container-jetty-http:3.1.1',
             'org.glassfish.jersey.inject:jersey-hk2:3.1.1',
             'org.glassfish.jersey.media:jersey-media-json-jackson:3.1.1'
@@ -50,6 +72,15 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+license {
+    header = project.file('HEADER.txt')
+//    skipExistingHeaders = true
+    include '**/*.java'
+    properties {
+        year = Year.now().value
+    }
 }
 
 javadoc {
