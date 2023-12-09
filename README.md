@@ -1,18 +1,133 @@
 # Coucal
 
-A headless Calendar User Agent (CUA) that provides essential functionality for calendaring, journaling and team collaboration.
+A mixed content API for collaborative data.
 
 ## Overview
 
-Coucal is designed to provide backend functionality for a wide variety of calendar, task and workflow applications. If you consider
-the current landscape of calendaring and work management applications you will see that for a long time it has been dominated by
-a few major products that have opinionated approaches to team collaboration. Coucal is provided to hopefully provide an alternative
-to how you build and customise your collaborative tooling and work management processes.
+Coucal is an application that provides support for managing a variety of collaborative activities through a mixed
+content API.
+
+### What is mixed content?
+
+The Coucal API for mixed content can support multiple types of data used for collaboration. Coucal is based on
+interoperability standards including iCalendar and vCard, and supports many derivatives of the following base data
+types:
+
+* Events - scheduling of public and private events
+* Tasks - tracking actionable tasks and activities
+* Journaling - recording shared notes and outcomes of collaborations
+* Availability - scheduling resource and individual availability for collaboration
+* Entities - capturing details of collaborative resources and actors
+
+### Content Structure
+
+Content payloads are loosely based on the properties found in the iCalendar and vCard specifications. When creating
+or consuming event-based content you will recognise the fields applicable to the iCalendar `VEVENT` component:
+
+```json
+{
+  "dtstart": "20231104T093000",
+  "dtend": "20231104T103000",
+  "summary": "Feature planning for next iteration",
+  "concept": "https://ical4j.org/event-types/MEETING"
+}
+```
+
+### Repositories
+
+Collaborative data is managed via content repositories that support typical CRUD operations, as well as a powerful
+content filtering language.
+
+### Workspaces
+
+Workspaces provide isolation between repositories intended for different contexts. For example, you might manage
+multiple teams that each have their own collaborative activities and processes. Providing a workspace for each team
+ensures their data and activities are isolated from the other teams.
+
+### Channels
+
+Interoperability with other collaborative tools is core to the Coucal mission. Channels provide an extensible design
+for managing the flow of data from and to repositories. A common scenario in scheduling is to use Email to transport
+invitations and replies to/from participants. Coucal supports such interactions via Channels, in addition to other
+data flows such as Webhooks and Websub.
+
+### Subscriptions
+
+TBD.
+
+### Filters
+
+TBD.
+
+### Templates
+
+TBD.
+
+===
+
+Coucal is designed to provide backend functionality for a wide variety of calendar, task and workflow applications. 
+If you consider the current landscape of calendaring and work management applications you will see that for a long time 
+it has been dominated by a few major products that have opinionated approaches to team collaboration. Coucal is provided 
+to hopefully provide an alternative to how you build and customise your collaborative tooling and work management
+processes.
 
 ## Design
 
-The Coucal architecture is based on the principles of interoperability and sharing. We want our data to be open and standardised,
-such that we can achieve maximum integration and collaboration with other tools and platforms. We also want 
+The Coucal architecture is based on the principles of interoperability and sharing. We want our data to be open and 
+standardised, such that we can achieve maximum integration and collaboration with other tools and platforms. We also 
+want to ensure that sharable content is revisable and consistent such that it doesn't become stale or misinformation.
+
+The core concepts in the Coucou design are as follows:
+
+### Repository
+
+Repositories are where user-generated content is stored. A Repository may be restricted to a specific type of content
+(e.g. events, tasks, etc.), or possibly a combination of multiple content types.
+
+List abridged contents:
+
+    curl https://api.coucal.net/v1/repositories/1/content
+
+Create a new resource:
+
+    curl -X https://api.coucal.net/v1/repositories/1/content
+    {
+        "template": "meeting"
+    }
+
+Get resource details:
+
+    curl https://api.coucal.net/v1/repositories/1/content/1
+
+Filter contents:
+
+    curl https://api.coucal.net/v1/repositories/1/content?q=concept%3Dmeeting+dtstart%gt;startOfWeek()+dtstart%lt;endOfWeek()
+
+
+### Channel
+
+A Channel is a bidirectional asynchronous communication channel used for publishing content to subscribers, as well
+as populating content from external sources.
+
+### Subscription
+
+A Subscription defines the consumers of published content. A Subscription may refer to individual content or an
+entire Channel.
+
+### Workspace
+
+A Workspace represents an isolated user context for managing content. It is an aggregation of Repository and Channel,
+and controls configuration and access to these constructs.
+
+### User
+
+A User represents an individual with access to the application for creating and managing content.
+
+### Team
+
+A Team is a grouping of one or more users that may be used to manage content and subscriptions collectively. The
+benefit of a Team is shared access to Workspace content and subscriptions.
+
 
 ## Features
 
