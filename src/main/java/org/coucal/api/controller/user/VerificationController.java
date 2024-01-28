@@ -16,7 +16,6 @@
 
 package org.coucal.api.controller.user;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Context;
@@ -24,7 +23,6 @@ import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
 import net.fortuna.ical4j.model.Calendar;
 import org.coucal.api.controller.ICalendarResponseVariants;
-import org.coucal.core.action.ActionManager;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,12 +32,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 //@Path("/verify/{guid}")
 public class VerificationController implements ICalendarResponseVariants {
-
-    private final ActionManager actionManager;
-
-    @Inject  public VerificationController(ActionManager actionManager) {
-        this.actionManager = actionManager;
-    }
 
     @GET
     public Response verifyEmail(@PathParam("guid") String guid, @Context Request req) {
