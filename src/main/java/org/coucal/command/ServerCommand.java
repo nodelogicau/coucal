@@ -29,6 +29,7 @@ import picocli.CommandLine;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "server", description = "Start server for receiving requests",
@@ -51,14 +52,14 @@ public class ServerCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
+        Set<String> resourcePackagesSet = new HashSet<>(Arrays.asList(resourcePackages));
         ResourceConfig resourceConfig = new ResourceConfig()
                 .packages("org.coucal.api.provider")
                 .packages(resourcePackages)
                 .register(new ControllerBinder())
                 .register(new CorsFilter())
-                .register(new OpenApiResource().resourcePackages(new HashSet<>(Arrays.asList(resourcePackages))))
-                .register(new AcceptHeaderOpenApiResource().resourcePackages(
-                        new HashSet<>(Arrays.asList(resourcePackages))));
+                .register(new OpenApiResource().resourcePackages(resourcePackagesSet))
+                .register(new AcceptHeaderOpenApiResource().resourcePackages(resourcePackagesSet));
 //        resourceConfig.register(
 //                new Pac4JSecurityFilterFeature(pac4jConfig, null, "isAuthenticated", null, "excludeUserSession", null));
 
