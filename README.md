@@ -13,11 +13,14 @@ The Coucal API for mixed content can support multiple types of data used for col
 interoperability standards including iCalendar and vCard, and supports many derivatives of the following base data
 types:
 
-* Events - scheduling of public and private events
-* Tasks - tracking actionable tasks and activities
-* Journaling - recording shared notes and outcomes of collaborations
+* Actions
 * Availability - scheduling resource and individual availability for collaboration
 * Entities - capturing details of collaborative resources and actors
+* Events - scheduling of public and private events
+* Issues - tracking actionable tasks and activities
+* Metrics
+* Notes - recording shared notes and outcomes of collaborations
+* Requests
 
 ### Content Structure
 
@@ -59,9 +62,60 @@ TBD.
 
 TBD.
 
-### Templates
+### Roles
 
 TBD.
+
+### Handlers
+
+Handlers perform specific actions in response to events in Coucal. Typically, handlers are used to publish, transform and ingest content
+from configured channels.
+
+#### SMTP
+
+The SMTP Handler is responsible for all email notifications produced in Coucal. This may include sending invitations and updates of events
+to participants, notification of changes to issues, requests, etc.
+
+Channel configurations are used to define the rules dictating the behaviour of the SMTP Handler, with default channels provided for each workspace:
+
+- When an Event is created, updated or deleted, email the changes to participants (i.e. extract `ATTENDEE` and `ORGANIZER` properties as recipients).
+- When an Observance is created, updated or deleted, email to all workspace members.
+- When an Action, Issue or Request are created, updated or deleted, email to assignees and watchers (i.e. extract `ATTENDEE` and `ORGANIZER` properties as recipients).
+
+#### WebSub
+
+The WebSub Handler provides support for publishing changes to a WebSub topic. For example, public events typically don't specify attendees but you still
+require a medium for sharing updates, etc.
+
+The WebSub handler also supports limited content transformations to allow for publishing content in other formats (e.g. Atom/RSS feed).
+
+No default configurations are provided for WebSub channels, however possible examples may include:
+
+- When an Event is created or updated with no attendees, publish to a WebSub topic.
+- When a Note is created or updated, publish as Atom to a WebSub topic.
+
+#### Webmention
+
+The Webmention handler is responsible for publishing links to content where a Webmention endpoint is provided. This can be useful where
+actions, issues, etc. are linked to internal and external events and requests, in order to reflect in the original content.
+
+No default channels are provided for Webmentiones, but possible examples could include:
+
+- When an Action, Event, Issue, Note, etc. is created or updated, and has a `RELATED-TO` property, check the referenced component for a Webmention link. Publish the Webmention details to the provided endpoint.
+
+
+#### XMPP
+
+The XMPP handler supports notifications over XMPP. This may include direct messages to participants or workspace members, or notifications
+to multi-user chats (rooms).
+
+No default channels are specified for XMPP, but possible examples are as follows:
+
+- When an Action, Event, Issue, etc. is created or updated, check for participants with corresponding entities that include `XMPP` properties. For all identified entities send a notification over XMPP.
+- When a new Request is raised, check workspace members for XMPP details and send notification.
+- When a new Request is raised, send an XMPP notification to a configured room.
+
+
 
 ===
 
